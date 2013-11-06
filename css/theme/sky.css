@@ -15,10 +15,11 @@ body {
   background: #c1d8a4;
   background: -moz-radial-gradient(center, circle cover, #f7fbfc 0%, #c1d8a4 100%);
   background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #f7fbfc), color-stop(100%, #c1d8a4));
-  background: -webkit-radial-gradient(center, circle cover, #f7fbfc 0%, #c1d8a4 100%);
+  background: -webkit-radial-gradient(center, circle cover, #f7fbfc 0%, #c2d696 100%);
   background: -o-radial-gradient(center, circle cover, #f7fbfc 0%, #c1d8a4 100%);
   background: -ms-radial-gradient(center, circle cover, #f7fbfc 0%, #c1d8a4 100%);
   background: radial-gradient(center, circle cover, #f7fbfc 0%, #c1d8a4 100%);
+  text-rendering: geometricPrecision;
   background-color: #f7fbfc; }
 
 .reveal {
@@ -53,6 +54,8 @@ body {
 
 .reveal pre {
     font-size: 1em; }
+.reveal code {
+    font-family: "Ubuntu Mono"; }
 
 .reveal p.name {
     font-family: "Quicksand";
