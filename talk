@@ -1,0 +1,259 @@
+
+Hi, I'm Conrad, one of the maintainers of Pry.
+
+Just before we get started, how many of you are using Pry already?
+
+Nice! The rest of you have some catching up to do :).
+
+Today I'm going to be showing off pry in the context of REPL-driven development.
+
+REPLs have been popular in the Lisp world for ages, the idea is pretty simple.
+It reads a line of code from the user, it runs the code to find what it
+evaluates to, and then it prints the result out so you can see it. Finally it
+loops back round so that you can type in a new line, it'll evaluate it, print
+the answer, and so on and so forth.
+
+The reason this was popular in LISP was that the whole language was designed
+around the idea that data and code were the same. It was really easy to build a
+REPL in LISP because it supports eval. It turns out that it's also really easy
+to build a REPL in ruby.  It basically looks like this.
+
+You'll notice that instead of read, we have to use `readline`, and instead of
+`print` we use `puts`, but otherwise this is a very simple line of code.
+
+Read one line from the standard input, evaluate it, puts the output and then
+loop around.
+
+So Pry started out as one line of code..., and it grew to about a hundred lines
+before John Mair first added it to git. John is the guy who created Pry, he's on
+the internet as banisterfiend if you want to follow him.
+
+Today Pry is about 12 thousand lines of code. We've improved in three main
+areas. 1. It no longer crashes if you type the wrong thing, or your code raises
+an exception, or you try and output a null byte. Pry is very robust and battle
+tested, I think we have about 4 million downloads so everyone's hammering it all
+the time. 2. It has colourful output, syntax highlighting and tab completion. As
+you'll hopefully see in a minute, it's easy to use. And 3. We have introspection
+wrappers. Ruby is a wonderful language, it lets you peek around at runtime and
+see what is what, but unfortunately it doesnt' make that very easy. Pry wraps
+all the introspection in easy to use commands.
+
+The question you should all be asking is. Why did we as a team think it was
+worth writing 12,000 lines of code to do this stuff?
+
+That seems like a lot of work.
+
+The answer lies in REPL driven development.
+
+When you practice REPL driven development, you use the REPL to guide the way you
+write the code. Just like in test driven development you use tests to help you
+build code that works, that has a nice API, and that is maintainable. With REPL
+driven development, you use the REPL to do the same things.
+
+REPL driven development was invented by the LISP people back in 1963, and it's
+coming under a huge resurgence now with Clojure. But it's something that works
+very well in Ruby. There's a reason that Matz put the `eval` function into ruby.
+There's a reason that Matz shipped `irb` with ruby by default. There's a reason
+that Ruby code is terse and easy to type.
+
+REPLs are awesome!.
+
+This is Mister Spock using a 1960s REPL.
+
+<pause>
+
+As a developer I have a problem.  When I write code, it doesn't work.  I mean it
+does sometimes, but most of the time, about 80%, it doesn't.
+
+Usually this is a typo or a syntax error, or perhaps I used the wrong name.
+Occasionally it's just a thinko on my part, I just wrote the wrong code. And
+from time to time it's a bug deep inside the app I'm working on.
+
+All of these things conspire together to mean that, anecdotally, I only get code
+right first time in about a fifth of cases. This means that there's a .8
+chance that my code is broken.
+
+I'm not going to make you own up to your percentage. But I'm assuming that
+everyone is similar, if you're new you might be closer to 0.9 chance it's broken, if
+you're Avdi Grimm or Yehuda Katz, maybe you're down to only 0.6 broken.
+
+What's interesting is that if you look at a production site, the exception rate
+is way lower. The only public exception rate meter that I know of is the one on
+Github.com and when I was writing these slides I came to the conclusion that
+their exception rate is about 8 in every billion method calls. That's about a
+hundred million times better than if they'd just written a load of code and
+stuck it online without running it first.
+
+Which makes sense if you think about it, if they'd just written all the code for
+github.com and pushed it, there's only about a 1 in a hundred million chance
+that it would work at all.
+
+How on earth did they do that?!
+
+I think there are about three steps to making code better.
+
+1. Run the code. This is the easiest way of making sure that code is working,
+just run it and see. Chances are that you'll find all the basic errors in no
+time at all.  2. Read the code that you're calling. It's one thing to try
+running the code a few times and see if you can manually trigger edge-cases,
+it's another to read the code you're calling and see whether there are any
+obvious edge-cases to avoid in it.  3. The last bit probably comes about from
+not just reading the code, but thoroughly understanding it. If you know which
+bits of code make what assumptions, and you know what calls what, you are likely
+to be able to do a far better job at writing code. Not only that, you'll be able
+to do it in a way that feels natural, so is easier to understand in turn.
+
+If those are the three steps to making code better, why doesn't everyone do
+them?
+
+Developers are always under time pressure.
+
+Understanding even small portions of large code-bases can take hours, days or
+even weeks. Most people don't have the time to understand everything, and given
+that you can get a long way without it, most people don't bother.
+
+That leaves us with two things that are easy to do. Run the code, and read the
+code. Running the code is something almost everyone does at least once before
+deploying. Mostly if I don't, I get embarrassed by a typo, so I have a very
+strong habit to run things before pushing them.
+
+Reading the code is an interesting one. If I am writing code that I have
+particularly low confidence in, then I'll often read the methods that it is
+calling, or the methods that call it, to see if I can spot any immediate
+gotchas. But mostly I don't bother.
+
+Pry has features that try and help you with these three things. Obviously Pry
+makes it easy to run code, that's the core of what a REPL is, but it also makes
+it easy to read code. Unlike the internet, or github, both of which are also
+very good for reading code, pry has everything you need right there and ready to
+show you. There's no wasted time context switching.
+
+Pry's code-reading features are more aimed at reading small snippets than entire
+projects. While you could in theory read everything through pry, I find it
+useful to have a git clone if I'm going to start looking in multiple files of a
+library.
+
+Let's have a look at what that looks like.
+
+I'm going to try live coding, but given that pry is a tool for debugging, it
+should be fine.
+
+This is a demonstration based on something I had to do recently of why a REPL is
+really good.
+
+The idea is that I want to use Mongo to look up a user by name. Now, to make it
+a bit harder, I don't remember if I signed up with my full name or my first
+name. So we're trying to write a Mongo query that can find either.
+
+I already have a global mongo object. dollar-mongo. You can see that this is
+powered my Moped, which is a low-level mongo driver for ruby. You can also see
+it's a nice ppretty green colour. Now all I need to do is figure out how to use
+it...
+
+Using the ? command it's pretty easy to pull up the documentation. I can also
+spell ? as show-doc; which is good for talking, but not so good for typing.
+
+When I hit enter, the docs for the Moped::Session class are brought up. Because
+most libraries store their docs in the code, pry uses the YARD gem to extract
+them at run time. This means that we don't need to waste time going to the
+internet, we just render the docs straight in your terminal. We even go to the
+trouble of syntax highlighting the examples.
+
+Anyway, A session in moped is root for all interactions blah blah. It can talk
+to a single default.
+
+As what I'm trying to do is a find query on a single database, I can see the
+syntax I need right there in the docs. Ok, I think I can remember how to do
+this.
+
+Let's first assign the users collection to a variable to save typing.
+
+Now, let's try to find me in the database.
+
+Oops, that doesn't look right. That's just a query object... Why didn't that
+work.
+
+Let's just have a look at the method and see what it did.
+
+Hmm, it just seems to return a Mongo::Query object. I wonder what I need to do
+with that. Let's use Pry to find out. I can use Pry's ls command to show all the
+methods on an object, it's just like ls in bash. Oh, I remember now, it said in
+the docs that I had to use .find.first, and there's the .first method.
+
+Ok, so let's try again. users.find(name: "Conrad").first
+
+w00h00, it's me! But wait, it's not the right me. I'm supposed to be an admin. I
+guess I must have signed up with my last name as well?
+
+No matter, it's easy to write a mongo query for multiple names. We just use its
+dollar-in operator:
+
+users.find(name: {$in: ["Conrad", "Conrad Irwin"]}).first
+
+Uh, Syntax error..
+
+Oh I see the $in is highlighted like a constant. I guess I need to escape it.
+
+Nice, that worked.
+
+I hope it was obvious that most of those fumbles were on purpose. Develoeprs
+never write code correctly first time. That's why live-coding is so scary. I
+definitely made more mistakes there than I was hoping to, but the idea is the
+important thing.
+
+A quick re-cap of the commands I just showed you. These are three of the most
+useful pry commands.
+
+ls shows you the methods on objects. it can also show you lists of constants, or
+globals or locals. ls is pretty much my go-to command for everything I want to
+know.
+
+The only thing ls doesn't do is show you the code for methods. For that you can
+use the dollar command or show-source.
+
+If you're interacting with a good library, it also might have documentation. In
+that case you can use the question mark or "show-doc" command.
+
+Pry will help you go from having nothing to having a line of code that actually
+works in essentially no time. If you don't have to explain to the audience
+what's happening on each line, you can zip through that process in well under a
+minute.
+
+Compare that to the case where you're trying to debug code in the middle of your
+app. Each time you run it, it crashes in a different and odd way. To debug it
+you need to add puts statements, and run it again. And then add more puts
+statements and then run it again.
+
+With pry, it automatically adds a puts statement after every line of code you
+type. It lets you get deep in there with the code you're working with.
+
+But this isn't the perfect way to develop, and there are definite downsides to
+using Pry or any REPL for everything.
+
+In particular any work that you do inside pry gets immediately forgotten as soon
+as you exit. It's not totally forgotten, we store a history file, but for all
+intents and purposes you can't really get at it again.
+
+Perhaps more importantly every time you make a change that might affect one part
+of your code-base, you have to test that bit of the code base again. Otherwise
+it's likely you'll break stuff that used to work.
+
+As your app gets bigger, this quickly becomes impractical. You can't use a REPL
+to verify that the whole thing is working every time. If you tried, you'd end up
+both very tired, and makeing lots of mistakes. If there's one thing we know
+about people, it's that they're really bad at mindless repetitive work.
+
+The solution is pretty obvious.
+
+Let's just use tests. Now obviously I'm not talking about fully test driven
+development, I prefer using the REPL first, but I still think it's an incredibly
+good idea to write tests as you go.
+
+If you're using a REPL you can also work out which tests to write more easily.
+The edge-cases you find in the REPL should translate directly into tests. You
+can also use the REPL while building tests to work out what the results should
+be.
+
+The ideal would be that if you use a REPL to find the soltuion to your problem,
+then write tests that describe the solution; when you get round to writing your
+application code it should work perfectly first time.
