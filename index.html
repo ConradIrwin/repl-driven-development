@@ -25,6 +25,11 @@
             document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
         </script>
 
+        <style>
+        * { font-size: 1.25em; }
+
+        </style>
+
         <!--[if lt IE 9]>
         <script src="lib/js/html5shiv.js"></script>
         <![endif]-->
@@ -37,15 +42,19 @@
             <!-- Any section element inside of this container is displayed as a slide -->
             <div class="slides">
                 <section>
-                  <h1>REPL-driven development</h1>
-                  <h2>with Pry!</h2>
+                  <img src="img/pry_logo.png" alt=""/>
+                  <p class="name">@ConradIrwin</p>
                 </section>
 
                 <section>
-                  <p><b>R</b>ead</p>
-                  <p><b>E</b>val</p>
-                  <p><b>P</b>rint</p>
-                  <p><b>L</b>oop</p>
+                  <center>
+                    <div style="text-align: left; display: inline-block; font-size: 180%;">
+                      <p><b>R</b>ead</p>
+                      <p><b>E</b>val</p>
+                      <p><b>P</b>rint</p>
+                      <p><b>L</b>oop</p>
+                    </div>
+                  </center>
                 </section>
 
                 <section>
@@ -67,7 +76,7 @@ binding.pry
                 </section>
 
                 <section>
-                  <h2>REPL driven development</h2>
+                  <h2>REPL-driven development</h2>
 
                   <ul>
                     <li>Don't write code first.</li>
@@ -88,29 +97,29 @@ binding.pry
                     <li>Github production: ~0.000000008*</li>
                   </ul>
 
-                  <p><small>Github exception-% this week is 0.0008%,
+                  <p><small>* Github exception-% this week is 0.0008%,<br/>
                             assume 1000 method-calls per request.</small></p>
 
                   <!-- Somewhere between 1 and 10 exceptions per hour, very impressive! -->
                 </section>
 
                 <section>
-                  <h2>How to get 100,000,000 times better?</h2>
+                  <h2>100,000,000 times better?</h2>
 
                   <ul>
                     <li>Run the code. =&gt; 1000 times better?</li>
                     <li>Read the code. =&gt; 100 times better?</li>
-                    <li>Understand the code. =&gt; 1000 times better?</li>
+                    <li>Understand the code. =&gt; 1000 times?</li>
                   </ul>
                 </section>
 
                 <section>
-                  <h2>How to get 100,000,000 times better?</h2>
+                  <h2>100,000,000 times better?</h2>
 
                   <ul>
-                    <li>Run the code. =&gt; takes a few seconds?</li>
-                    <li>Read the code. =&gt; takes a few minutes?</li>
-                    <li>Understand the code. =&gt; takes hours or days?</li>
+                    <li>Run the code. =&gt; takes seconds?</li>
+                    <li>Read the code. =&gt; takes minutes?</li>
+                    <li>Understand the code. =&gt; takes days?</li>
                   </ul>
                 </section>
 
@@ -284,22 +293,24 @@ binding.pry
                   <h1>DEMO</h1>
 
                   <!--
-                  ruby run.rb
+                  $ ruby run.rb
                   <crash>
-                  pry
-                  pry(main) [1]> cat run.rb
+                  $ vi mongo.rb
                   ...
-                  pry(main) [2]> edit run.rb
+                  $ ruby run.rb
+                  pry(main) [1]> names
                   ...
-                  pry(main) [1]> request.first_name
+                  pry(main) [2]> up
                   ...
-                  pry(main) [2]> cd request
+                  pry(main) [3]> request.first_name
                   ...
-                  pry(main) [3]> $ first_name
+                  pry(main) [4]> cd request
                   ...
-                  pry(main) [4]> @data
+                  pry(main) [5]> $ first_name
                   ...
-                  pry(main) [4]> edit
+                  pry(main) [6]> @data
+                  ...
+                  pry(main) [4]> edit -m
                   ...
                   pry(main) [5]> first_name
                   ...
@@ -371,11 +382,11 @@ binding.pry
                 progress: true,
                 history: true,
                 center: true,
-                width: 1024,
-                height: 768,
+                width: 900,
+                height: 700,
                 margin: 0,
 
-                theme: Reveal.getQueryHash().theme || 'simple', // available themes are in /css/theme
+                theme: Reveal.getQueryHash().theme || 'sky', // available themes are in /css/theme
                 transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
 
                 // Optional libraries used to extend on reveal.js
